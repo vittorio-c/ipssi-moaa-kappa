@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import urllib.request
 
 
 year_counter = 1901
@@ -11,5 +12,6 @@ while year_counter < 2023:
     soup = BeautifulSoup(data, features="html5lib")
     for link in soup.find_all('a'):
         if link.get('href').endswith(".csv"):
-            requests.get(url_dir + link.string)
+            urllib.request.urlretrieve(url_dir + link.string, f"data/{link.string}")
+            print(f"DOWNLOADED: {url_dir + link.string}")
     year_counter += 1
