@@ -5,20 +5,17 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 
-year_counter = 1901
+year_counter = 2022
 
-while year_counter < 2023:
+while year_counter > 2007:
     url_dir = f"https://www.ncei.noaa.gov/data/global-hourly/access/{year_counter}/"
     r  = requests.get(url_dir)
     data = r.text
     soup = BeautifulSoup(data, features="html5lib")
     for link in soup.find_all('a'):
-        try:
-            os.makedirs(f"/data/{year_counter}", exist_ok=True)
-            print(f"DIRECTORY {year_counter} CREATED")
-        except FileExistsError:
-            continue
+        os.makedirs(f"/data/{year_counter}", exist_ok=True)
+        print(f"DIRECTORY {year_counter} CREATED")
         if link.get('href').endswith(".csv"):
             urllib.request.urlretrieve(url_dir + link.string, filename=f"/data/{year_counter}/{link.string}")
             print(f"DOWNLOADED: {url_dir + link.string}")
-    year_counter += 1
+    year_counter -= 1
