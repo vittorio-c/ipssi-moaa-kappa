@@ -55,6 +55,15 @@ services:
     env_file:
       - ./hadoop.env
 
+  webappbackend:
+    image: tiangolo/uwsgi-nginx-flask:python3.10
+    environment:
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
+    volumes:
+      - ./app:/app/
+    env_file:
+      - ./webapp.env
+
 volumes:
   hadoop_namenode:
   hadoop_datanode:
