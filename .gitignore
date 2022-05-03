@@ -168,4 +168,4 @@ cython_debug/
 .idea/
 .vscode/
 data/
-#app/data
+*.ipynb
