@@ -4,13 +4,16 @@ import hdfs
 
 client = hdfs.InsecureClient("http://namenode:9870")
 
-for year in range(2007, 2023):
-    hdfs_path = os.path.join(os.sep, 'lambda-user', 'moaa_data', str(year))
-    local_path = os.getcwd() + f'/data/{str(year)}'
-    print(f'Uploading {local_path} to {hdfs_path}')
+
+data_directory = os.getcwd() + '/data'
+
+for sub_directory in [x[0] for x in os.walk(data_directory)][1:]:
+    year = sub_directory.split('/')[-1]
+    hdfs_path = os.path.join(os.sep, 'lambda-user', 'moaa_data', year)
+    print(f'Uploading {sub_directory} to {hdfs_path}')
     client.upload(
         hdfs_path,
-        local_path,
+        sub_directory,
         overwrite=True,
         temp_dir='/tmp/hadoop-upload',
         n_threads=4

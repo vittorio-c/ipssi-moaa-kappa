@@ -1,21 +1,28 @@
 import os
 import requests
 import urllib.request
+from multiprocessing import Pool
 
 from bs4 import BeautifulSoup
 
 
-year_counter = 2022
+def import_by_years(year_range):
+    year_range_as_string = ' '.join(map(str, year_range))
+    print(f'Worker starting to work on year range : {year_range_as_string}')
+    for year in year_range:
+        url_dir = f"https://www.ncei.noaa.gov/data/global-hourly/access/{year}/"
+        r = requests.get(url_dir)
+        data = r.text
+        soup = BeautifulSoup(data, features="html5lib")
+        for link in soup.find_all('a'):
+            os.makedirs(f"./data/{year}", exist_ok=True)
+            if link.get('href').endswith(".csv"):
+                (r, n) = urllib.request.urlretrieve(url_dir + link.string, filename=f"./data/{year}/{link.string}")
+                print(f"DOWNLOADED: {url_dir + link.string}")
 
-while year_counter > 2007:
-    url_dir = f"https://www.ncei.noaa.gov/data/global-hourly/access/{year_counter}/"
-    r  = requests.get(url_dir)
-    data = r.text
-    soup = BeautifulSoup(data, features="html5lib")
-    for link in soup.find_all('a'):
-        os.makedirs(f"./data/{year_counter}", exist_ok=True)
-        print(f"DIRECTORY {year_counter} CREATED")
-        if link.get('href').endswith(".csv"):
-            urllib.request.urlretrieve(url_dir + link.string, filename=f"./data/{year_counter}/{link.string}")
-            print(f"DOWNLOADED: {url_dir + link.string}")
-    year_counter -= 1
+
+rangings = [[i, f] for (i, f) in zip(range(2000, 2020, 2), range(2001, 2021, 2))]
+
+if __name__ == '__main__':
+    pool = Pool(processes=10)
+    pool.map(import_by_years, rangings)
