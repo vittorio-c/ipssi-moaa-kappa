@@ -1,23 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
-# ---
-# jupyter:
-#   jupytext:
-#     cell_metadata_filter: -all
-#     formats: ipynb,py:percent
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.13.8
-# ---
-
 # %%
 
-# %%
-
-
+from pyspark.sql.types import *
+from datetime import datetime
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import udf, col
 
 spark = SparkSession.builder.getOrCreate()
 
@@ -50,3 +38,16 @@ all_data = spark.read.load(
 )
 
 all_data.head()
+
+
+# %%
+@udf(returnType = TimestampType())
+def to_datetime(colonne):
+    return datetime.strptime(colonne, '%Y-%m-%dT%H:%M:%S')
+
+
+# %%
+all_data_with_date = all_data.withColumn("DATE_TIME", to_datetime("DATE"))
+filtered_by_city = all_data_with_date.filter(col("NAME").contains("JAN MAYEN NOR NAVY, NO"))
+filtered_by_city_and_date = filtered_by_city.filter(col("DATE_TIME").contains("2016-01-01 00:00:00"))
+filtered_by_city_and_date.show()
