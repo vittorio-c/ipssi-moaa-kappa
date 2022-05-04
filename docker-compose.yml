@@ -61,8 +61,6 @@ services:
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
     volumes:
       - ./app:/app/
-    env_file:
-      - ./webapp.env
     ports:
       - "8088:80"
 
@@ -104,6 +102,17 @@ services:
       - "18081:18081"
     volumes:
       - /tmp/spark-events-local:/tmp/spark-events
+
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
+      MARIADB_DATABASE: moaa_db
+      MARIADB_USER: lambda-user
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD}
 
 volumes:
   hadoop_namenode:
