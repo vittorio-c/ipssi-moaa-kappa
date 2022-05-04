@@ -26,3 +26,4 @@ rangings = [[i, f] for (i, f) in zip(range(2000, 2020, 2), range(2001, 2021, 2))
 if __name__ == '__main__':
     pool = Pool(processes=10)
     pool.map(import_by_years, rangings)
+
