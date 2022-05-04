@@ -131,26 +131,26 @@ all_stations.printSchema()
 
 # %%
 # Par année
-mean_tmp_by_year = all_stations.groupBy([year("DATE").alias("Year")]).agg(mean("temperature").alias("Mean TMP"))
+mean_tmp_by_year = all_stations.groupBy([year("DATE").alias("Year")]).agg(mean("temperature").alias("mean_tmp"))
 mean_tmp_by_year = mean_tmp_by_year.sort("Year")
 mean_tmp_by_year
 
 # %%
 # Par mois
-mean_tmp_by_month = all_stations.groupBy([year("DATE").alias("Year"), month("DATE").alias("Month")]).agg(mean("temperature").alias("Mean TMP"))
-mean_tmp_by_month = mean_tmp_by_month.sort("Year", "Month")
+mean_tmp_by_month = all_stations.groupBy([year("DATE").alias("year"), month("DATE").alias("month")]).agg(mean("temperature").alias("mean_tmp"))
+mean_tmp_by_month = mean_tmp_by_month.sort("year", "month")
 mean_tmp_by_month
 
 # %%
 # Par jour
-mean_tmp_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("Date")).agg(mean("temperature").alias("Mean TMP"))
+mean_tmp_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("date")).agg(mean("temperature").alias("mean_tmp"))
 mean_tmp_by_day = mean_tmp_by_day.sort("Date")
 mean_tmp_by_day
 
 # %%
 # Par saisons
-mean_tmp_by_season = all_stations.groupBy([year("DATE").alias("Year"), "season"]).agg(mean("temperature").alias("Mean TMP"))
-mean_tmp_by_season = mean_tmp_by_season.sort("Year", "season")
+mean_tmp_by_season = all_stations.groupBy([year("DATE").alias("year"), "season"]).agg(mean("temperature").alias("mean_tmp"))
+mean_tmp_by_season = mean_tmp_by_season.sort("year", "season")
 mean_tmp_by_season
 
 # %%
@@ -167,26 +167,26 @@ mean_tmp_by_season
 
 # %%
 # Par année
-min_max_tmp_by_year = all_stations.groupBy([year("DATE").alias("Year")]).agg(F.min("temperature").alias("Min TMP"), F.max("temperature").alias("Max TMP"))
-min_max_tmp_by_year = min_max_tmp_by_year.sort("Year")
+min_max_tmp_by_year = all_stations.groupBy([year("DATE").alias("year")]).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
+min_max_tmp_by_year = min_max_tmp_by_year.sort("year")
 min_max_tmp_by_year
 
 # %%
 # Par mois
-min_max_tmp_by_month = all_stations.groupBy([year("DATE").alias("Year"), month("DATE").alias("Month")]).agg(F.min("temperature").alias("Min TMP"), F.max("temperature").alias("Max TMP"))
-min_max_tmp_by_month = min_max_tmp_by_month.sort("Year", "Month")
+min_max_tmp_by_month = all_stations.groupBy([year("DATE").alias("year"), month("DATE").alias("month")]).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
+min_max_tmp_by_month = min_max_tmp_by_month.sort("year", "month")
 min_max_tmp_by_month
 
 # %%
 # Par jour
-min_max_tmp_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("Date")).agg(F.min("temperature").alias("Min TMP"), F.max("temperature").alias("Max TMP"))
-min_max_tmp_by_day = min_max_tmp_by_day.sort("Date")
+min_max_tmp_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("date")).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
+min_max_tmp_by_day = min_max_tmp_by_day.sort("date")
 min_max_tmp_by_day
 
 # %%
 # Par saisons
-min_max_tmp_by_season = all_stations.groupBy([year("DATE").alias("Year"), "season"]).agg(F.min("temperature").alias("Min TMP"), F.max("temperature").alias("Max TMP"))
-min_max_tmp_by_season = min_max_tmp_by_season.sort("Year", "season")
+min_max_tmp_by_season = all_stations.groupBy([year("DATE").alias("year"), "season"]).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
+min_max_tmp_by_season = min_max_tmp_by_season.sort("year", "season")
 min_max_tmp_by_season
 
 # %%
