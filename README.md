@@ -2,7 +2,7 @@
 
 Pour exporter son juptyer notebook en .py :
 
-`jupytext --to py:percent <filename>.ipynb`
+`jupytext --format-options notebook_metadata_filter="-all" --to py:percent <filename>.ipynb`
 
 Pour exporter un fichier .py en juptyer notebook :
 
