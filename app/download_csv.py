@@ -1,4 +1,5 @@
 import os
+from os.path import exists
 import requests
 import urllib.request
 from multiprocessing import Pool
@@ -17,11 +18,14 @@ def import_by_years(year_range):
         for link in soup.find_all('a'):
             os.makedirs(f"./data/{year}", exist_ok=True)
             if link.get('href').endswith(".csv"):
-                (r, n) = urllib.request.urlretrieve(url_dir + link.string, filename=f"./data/{year}/{link.string}")
-                print(f"DOWNLOADED: {url_dir + link.string}")
+                if exists(f"./data/{year}/{link.string}"):
+                    print("ALREADY EXISTS")
+                else:
+                    (r, n) = urllib.request.urlretrieve(url_dir + link.string, filename=f"./data/{year}/{link.string}")
+                    print(f"DOWNLOADED: {url_dir + link.string}")
 
 
-rangings = [[i, f] for (i, f) in zip(range(2000, 2020, 2), range(2001, 2021, 2))]
+rangings = [[i, f] for (i, f) in zip(range(1902, 2020, 2), range(1901, 2021, 2))]
 
 if __name__ == '__main__':
     pool = Pool(processes=10)
