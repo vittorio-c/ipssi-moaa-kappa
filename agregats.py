@@ -4,7 +4,7 @@ from pyspark.sql import functions as F
 from pyspark.sql.functions import udf, mean, month, year, to_date, col
 from pyspark.sql.types import *
 
-from base_notebook import all_data as all_stations
+from base_methods import all_data as all_stations
 
 # %%
 spark = SparkSession\
