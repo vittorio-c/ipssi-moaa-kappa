@@ -4,6 +4,8 @@ from pyspark.sql import functions as F
 from pyspark.sql.functions import udf, mean, month, year, to_date
 from pyspark.sql.types import *
 
+from base_notebook import all_data as all_stations
+
 # %%
 spark = SparkSession\
     .builder\
@@ -11,60 +13,6 @@ spark = SparkSession\
     .getOrCreate()
 
 mariadb_container_ip = 'localhost:3306'
-hadoop_uri = 'hdfs://localhost:9000/lambda-user/moaa_data/*'
-
-
-# %%
-spark.conf.set('spark.sql.repl.eagerEval.enabled', True)
-
-# %%
-spark
-
-# %% [markdown]
-# # Schema de données
-
-# %%
-schema = StructType() \
-    .add("STATION", IntegerType(), False) \
-    .add("DATE", TimestampType(), False) \
-    .add("SOURCE", IntegerType(), True) \
-    .add("LATITUDE", FloatType(), True) \
-    .add("LONGITUDE", FloatType(), True) \
-    .add("ELEVATION", StringType(), True) \
-    .add("NAME", StringType(), True) \
-    .add("REPORT_TYPE", StringType(), True) \
-    .add("CALL_SIGN", StringType(), True) \
-    .add("QUALITY_CONTROL", StringType(), True) \
-    .add("WND", StringType(), True) \
-    .add("CIG", StringType(), True) \
-    .add("VIS", StringType(), True) \
-    .add("TMP", StringType(), True) \
-    .add("DEW", StringType(), True) \
-    .add("SLP", StringType(), True) \
-    .add("GA1", StringType(), True) \
-    .add("GA2", StringType(), True) \
-    .add("GA3", StringType(), True) \
-    .add("GA4", StringType(), True) \
-    .add("GF1", StringType(), True) \
-    .add("MA1", StringType(), True) \
-    .add("MW1", StringType(), True) \
-    .add("MW2", StringType(), True) \
-    .add("MW3", StringType(), True) \
-    .add("OC1", StringType(), True) \
-    .add("REM", StringType(), True) \
-    .add("EQD", StringType(), True)
-
-# %% [markdown]
-# # Chargement des données
-
-# %%
-# station_2018 = spark.read.load("./data/2018", format="csv", header=True, schema=schema, inferSchema=False)
-# station_2018.show()
-
-# %%
-cols_of_interest = ("STATION","DATE","SOURCE","LATITUDE","LONGITUDE","ELEVATION","NAME","REPORT_TYPE","CALL_SIGN","QUALITY_CONTROL","WND","CIG","VIS","TMP","DEW","SLP")
-
-all_stations = spark.read.load(hadoop_uri, format="csv", header=True, schema=schema, inferSchema=False).select(*cols_of_interest)
 
 # %%
 all_stations.head()
@@ -249,9 +197,3 @@ insert_data_in_mysql(min_max_tmp_by_month, table_name)
 table_name = 'min_max_temperatures_by_day'
 
 insert_data_in_mysql(min_max_tmp_by_day, table_name)
-
-# %%
-
-# %%
-
-# %%
