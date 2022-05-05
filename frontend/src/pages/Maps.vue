@@ -1,6 +1,6 @@
 <template>
   <Header/>
-  <h1>HELLO </h1>
+
   <show-stations-by-year/>
 </template>
 

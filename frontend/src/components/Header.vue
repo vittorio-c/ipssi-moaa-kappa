@@ -1,8 +1,8 @@
 <template>
   <ul
-    class="h-full navbar bg-green-400 p-4 flex justify-between justify-items-center font-bold mb-4"
+    class="h-full navbar bg-blue-400 p-4 flex justify-start justify-items-center font-bold mb-4"
   >
-    <li class="align-middle">
+    <li class="align-middle mx-8">
       <router-link to="/graphs">Graphs</router-link>
     </li>
     <li class="align-middle">
