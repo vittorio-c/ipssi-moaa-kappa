@@ -50,6 +50,3 @@ all_data = spark.read.load(
 ).select(*cols_of_interest)
 
 
-
-# %% pycharm={"name": "#%%\n"}
-all_data.limit(10).toPandas()
