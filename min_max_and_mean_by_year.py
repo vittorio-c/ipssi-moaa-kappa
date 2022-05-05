@@ -197,3 +197,18 @@ insert_data_in_mysql(min_max_tmp_by_month, table_name)
 table_name = 'min_max_temperatures_by_day'
 
 insert_data_in_mysql(min_max_tmp_by_day, table_name)
+
+# %% [markdown]
+# # Moyenne des Températures et des Elevations (niveau de la mer) par année . @author: Steeve
+
+# %%
+mean_tmp_elevation_by_year = all_stations.groupBy([year("DATE").alias("year"), "STATION"]).agg(mean("temperature").alias("mean_tmp"), mean("ELEVATION").alias("mean_elevation"))
+mean_tmp_elevation_by_year = mean_tmp_elevation_by_year.sort("year")
+mean_tmp_elevation_by_year.count()
+
+# %%
+import seaborn as sns
+
+# %%
+g = sns.relplot(x="mean_tmp", y="mean_elevation", hue="year", data=df_pandas, palette ='magma')
+
