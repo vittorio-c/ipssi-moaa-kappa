@@ -1,14 +1,15 @@
 <template>
   <Header/>
-  <p>Hello graphs</p>
+  <mean-temperatures-by-periods/>
 </template>
 
 <script>
 import Header from "@/components/Header";
+import MeanTemperaturesByPeriods from "@/components/MeanTemperaturesByPeriods";
 
 export default {
   name: "Maps",
-  components: {Header}
+  components: {MeanTemperaturesByPeriods, Header}
 }
 </script>
 
