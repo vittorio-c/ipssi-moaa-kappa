@@ -131,8 +131,8 @@ all_stations.printSchema()
 
 # %%
 # Par année
-mean_tmp_by_year = all_stations.groupBy([year("DATE").alias("Year")]).agg(mean("temperature").alias("mean_tmp"))
-mean_tmp_by_year = mean_tmp_by_year.sort("Year")
+mean_tmp_by_year = all_stations.groupBy([year("DATE").alias("year")]).agg(mean("temperature").alias("mean_tmp"))
+mean_tmp_by_year = mean_tmp_by_year.sort("year")
 mean_tmp_by_year
 
 # %%
@@ -144,7 +144,7 @@ mean_tmp_by_month
 # %%
 # Par jour
 mean_tmp_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("date")).agg(mean("temperature").alias("mean_tmp"))
-mean_tmp_by_day = mean_tmp_by_day.sort("Date")
+mean_tmp_by_day = mean_tmp_by_day.sort("date")
 mean_tmp_by_day
 
 # %%
