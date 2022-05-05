@@ -5,7 +5,6 @@ from pyspark.sql import functions as F
 from pyspark.sql.types import *
 from pyspark.sql.functions import udf, hour, mean, month, year, to_date
 from pyspark.sql.window import Window
-import glob
 
 # %%
 spark = SparkSession.builder.getOrCreate()
