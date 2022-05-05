@@ -1,38 +1,44 @@
 <template>
-  <h2>Températures moyennes par stations pour {{ selectedYear }}</h2>
-  <p>Choisir une autre année : </p>
+  <div class="mx-auto w-5/6">
+    <h2 class="text-xl font-bold">Températures moyennes par stations pour {{ selectedYear }}</h2>
+    <div class="my-4">Choisir une autre année :
+      <select v-if="distinctYears" v-model="selectedYear">
+        <option v-for="(year, key) in distinctYears" v-bind:key="key">
+          {{ year }}
+        </option>
+      </select>
 
-  <select v-if="distinctYears" v-model="selectedYear">
-    <option v-for="(year, key) in distinctYears" v-bind:key="key">
-      {{ year }}
-    </option>
-  </select>
-  <div
-    style="height: 75vh; width: 75vw;"
-  >
-    <l-map
-      v-model="zoom"
-      v-model:zoom="zoom"
-      :center="[47.41322, -1.219482]"
-      @move="log('move')"
+    </div>
+
+    <div
+      style="height: 75vh; width: 75vw;"
     >
-      <l-tile-layer
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      ></l-tile-layer>
-      <l-control-layers/>
-      <div v-if="showCoordinates">
-        <l-marker
-          v-for="coordinate in geocordinates"
-          v-bind:key="coordinate.stations_id"
-          :lat-lng="[ coordinate.latitude, coordinate.longitude]"
-          @moveend="log('moved marker')"
-        >
-          <l-tooltip>
-            Température moyenne : {{ new Intl.NumberFormat().format(coordinate.mean_tmp) }} ° C
-          </l-tooltip>
-        </l-marker>
-      </div>
-    </l-map>
+      <l-map
+        v-model="zoom"
+        v-model:zoom="zoom"
+        :center="[47.41322, -1.219482]"
+        @move="log('move')"
+      >
+        <l-tile-layer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        ></l-tile-layer>
+        <l-control-layers/>
+        <div v-if="showCoordinates">
+          <l-marker
+            v-for="coordinate in geocordinates"
+            v-bind:key="coordinate.stations_id"
+            :lat-lng="[ coordinate.latitude, coordinate.longitude]"
+            @moveend="log('moved marker')"
+          >
+            <l-tooltip>
+              Température moyenne : {{ new Intl.NumberFormat().format(coordinate.mean_tmp) }} ° C
+            </l-tooltip>
+          </l-marker>
+        </div>
+      </l-map>
+    </div>
+
+
   </div>
 </template>
 <script>
