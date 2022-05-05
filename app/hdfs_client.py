@@ -5,7 +5,7 @@ import hdfs
 client = hdfs.InsecureClient("http://namenode:9870")
 
 
-data_directory = os.getcwd() + '/data'
+data_directory = f"{os.getcwd()}/data"
 
 for sub_directory in [x[0] for x in os.walk(data_directory)][1:]:
     year = sub_directory.split('/')[-1]

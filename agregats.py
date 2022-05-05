@@ -1,10 +1,10 @@
 # %%
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-from pyspark.sql.functions import udf, mean, month, year, to_date
+from pyspark.sql.functions import udf, mean, month, year, to_date, col
 from pyspark.sql.types import *
 
-from base_notebook import all_data as all_stations
+from base_methods import all_data as all_stations
 
 # %%
 spark = SparkSession\
@@ -71,8 +71,6 @@ all_stations = all_stations.withColumn('season', create_season(month("DATE")))
 # %%
 all_stations.printSchema()
 
-# %%
-
 # %% [markdown]
 # ## Moyenne des températures par année/mois/journée/saison
 
@@ -81,9 +79,6 @@ all_stations.printSchema()
 mean_tmp_by_year = all_stations.groupBy([year("DATE").alias("year")]).agg(mean("temperature").alias("mean_tmp"))
 mean_tmp_by_year = mean_tmp_by_year.sort("year")
 mean_tmp_by_year.head()
-
-# %% pycharm={"name": "#%%\n"}
-# mean_tmp_by_year.toPandas()
 
 # %%
 # Par mois
@@ -126,8 +121,7 @@ def insert_data_in_mysql(dataframe, table_name):
     .save()
 
 
-
-# %% pycharm={"name": "#%%\n", "is_executing": true}
+# %% pycharm={"is_executing": true, "name": "#%%\n"}
 table_name = 'mean_temperatures_by_year'
 
 insert_data_in_mysql(mean_tmp_by_year, table_name)
@@ -177,6 +171,11 @@ min_max_tmp_by_day.head(100)
 min_max_tmp_by_season = all_stations.groupBy([year("DATE").alias("year"), "season"]).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
 min_max_tmp_by_season = min_max_tmp_by_season.sort("year", "season")
 min_max_tmp_by_season.head(10)
+
+# %%
+# Par Ville, Station et DATE
+min_max_tmp_by_month_and_city = all_stations.groupBy([col("NAME").alias("ville"), col("STATION"), year("DATE").alias("year"), month("DATE").alias("month")]).agg(F.min("temperature").alias("min_tmp"), F.max("temperature").alias("max_tmp"))
+min_max_tmp_by_month_and_city = min_max_tmp_by_month_and_city.sort("ville", "STATION", "year", "month")
 
 # %%
 table_name = 'min_max_temperatures_by_season'

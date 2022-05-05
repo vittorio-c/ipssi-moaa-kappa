@@ -19,10 +19,10 @@ def import_by_years(year_range):
             os.makedirs(f"./data/{year}", exist_ok=True)
             if link.get('href').endswith(".csv"):
                 if exists(f"./data/{year}/{link.string}"):
-                    print("ALREADY EXISTS")
+                    print(f"ALREADY EXISTS {year}/{link.string}")
                 else:
                     (r, n) = urllib.request.urlretrieve(url_dir + link.string, filename=f"./data/{year}/{link.string}")
-                    print(f"DOWNLOADED: {url_dir + link.string}")
+                    print(f"DOWNLOADED: {year}/{link.string}")
 
 
 rangings = [[i, f] for (i, f) in zip(range(1902, 2020, 2), range(1901, 2021, 2))]
