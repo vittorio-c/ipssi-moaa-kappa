@@ -3,7 +3,7 @@
   <div>
     <div>
       <span class="mx-4">
-        Visualiser la température moyenne :
+        Visualiser les températures min/max :
       </span>
 
       <select v-model="selectedOption">
@@ -12,8 +12,8 @@
         </option>
       </select>
       <span v-if="showSelectYear" class="mx-4">
-      Sur l'année :
-    </span>
+          Sur l'année :
+      </span>
       <select
         v-if="showSelectYear"
         v-model="selectedYear"
@@ -29,15 +29,13 @@
       :chart-data="chartData"
     />
   </div>
-
 </template>
-
 <script>
 import axios from "axios";
 import LineChart from "@/components/ChartLine";
 
 export default {
-  name: "MeanTemperaturesByPeriods",
+  name: "MinMaxTemperaturesByPeriods",
   components: {LineChart},
   data() {
     return {
@@ -51,8 +49,11 @@ export default {
   },
   computed: {
     chartData() {
-      const temperatures = this.temperatures.map((elem) => {
-        return elem.mean_tmp
+      const min = this.temperatures.map((elem) => {
+        return elem.min_tmp
+      })
+      const max = this.temperatures.map((elem) => {
+        return elem.max_tmp
       })
       const labels = this.temperatures.map((elem) => {
         return elem.date
@@ -61,16 +62,25 @@ export default {
         labels: labels,
         datasets: [
           {
-            label: 'Température moyenne',
-            backgroundColor: '#55922c',
-            data: temperatures
-          }
+            label: 'Température Min',
+            backgroundColor: '#4edec8',
+            data: min
+          },
+          {
+            label: 'Température Max',
+            backgroundColor: '#ca653c',
+            data: max,
+            fill: {
+              target: 0,
+              above: 'rgba(253,237,85,0.42)',   // Area will be red above the origin
+            }
+          },
         ]
       }
     },
     url() {
       if (this.selectedOption === 'Par saisons') {
-        return 'http://localhost:8088/api/tmp/by-season'
+        return 'http://localhost:8088/api/min-max/by-season'
       }
 
       if (this.selectedOption === 'Par mois') {
@@ -79,7 +89,7 @@ export default {
           year = this.selectedYear
         }
 
-        return 'http://localhost:8088/api/tmp/by-month/' + year
+        return 'http://localhost:8088/api/min-max/by-month/' + year
       }
 
       if (this.selectedOption === 'Par jours') {
@@ -88,10 +98,10 @@ export default {
           year = this.selectedYear
         }
 
-        return 'http://localhost:8088/api/tmp/by-day/' + year
+        return 'http://localhost:8088/api/min-max/by-day/' + year
       }
 
-      return 'http://localhost:8088/api/tmp/by-year'
+      return 'http://localhost:8088/api/min-max/by-year'
     },
     showSelectYear() {
       return this.selectedOption === 'Par mois' ||

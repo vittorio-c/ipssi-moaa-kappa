@@ -24,7 +24,8 @@ import {
   LineElement,
   LinearScale,
   CategoryScale,
-  PointElement
+  PointElement,
+  Filler
 } from 'chart.js'
 
 ChartJS.register(
@@ -34,7 +35,8 @@ ChartJS.register(
   LineElement,
   LinearScale,
   CategoryScale,
-  PointElement
+  PointElement,
+  Filler
 )
 
 export default {
