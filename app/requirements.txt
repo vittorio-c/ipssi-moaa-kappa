@@ -39,6 +39,7 @@ jupyter-core==4.10.0
 jupyterlab-pygments==0.2.2
 jupyterlab-widgets==1.1.0
 jupytext==1.13.8
+kafka-python==2.0.2
 kiwisolver==1.4.2
 markdown-it-py==2.1.0
 MarkupSafe==2.1.1
