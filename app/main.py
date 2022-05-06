@@ -256,3 +256,33 @@ def min_max_by_year():
 
     return jsonify(out)
 
+
+@app.route("/api/tmp-elevation/by-year/<year>")
+@app.route("/api/tmp-elevation/by-year/", defaults={'year': None})
+def tmp_elevation(year):
+    mycursor = mariabdb_client.cursor()
+    sql = f"SELECT * FROM mean_tmp_elevation_by_year WHERE station IS NOT NULL"
+
+    if year:
+        sql += f' AND year = \'{year}\''
+
+    mycursor.execute(sql)
+
+    temperatures = mycursor.fetchall()
+    mycursor.execute("SELECT DISTINCT year FROM mean_tmp_elevation_by_year")
+    available_years = mycursor.fetchall()
+
+    out = {"_data": [], "_meta": {
+        "distinct_years": [year[0] for year in available_years]
+    }}
+    for (year, station, mean_tmp, mean_elevation) in temperatures:
+        record = {
+            "date": year,
+            "station": station,
+            "mean_tmp": mean_tmp,
+            "mean_elevation": mean_elevation,
+        }
+        out["_data"].append(record)
+
+    return jsonify(out)
+
