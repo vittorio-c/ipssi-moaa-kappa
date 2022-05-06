@@ -174,16 +174,45 @@ table_name = "min_max_temperatures_by_month_and_city"
 insert_data_in_mysql(min_max_tmp_by_month_and_city, table_name)
 
 # %% [markdown]
-# # Moyenne des Températures et des Elevations (niveau de la mer) par année . @author: Steeve
+# # Moyenne des Températures et des Elevations (niveau de la mer) par année. @author: Steeve
 
 # %%
 mean_tmp_elevation_by_year = all_stations.groupBy([year("DATE").alias("year"), "STATION"]).agg(mean("temperature").alias("mean_tmp"), mean("ELEVATION").alias("mean_elevation"))
 mean_tmp_elevation_by_year = mean_tmp_elevation_by_year.sort("year")
 mean_tmp_elevation_by_year.count()
 
+# %% [markdown]
+# # Moyenne des Températures et précipitations par année et par mois.
 # %%
-import seaborn as sns
+all_stations = all_stations.na.drop(how="any", subset=["DEW"]).filter(~all_stations.DEW.contains("+9999"))
 
-# %%
-g = sns.relplot(x="mean_tmp", y="mean_elevation", hue="year", data=df_pandas, palette ='magma')
+@udf(returnType=FloatType())
+def extract_dew(dew_col: str):
+    return int(dew_col.split(',')[0].lstrip('+')) / 10
 
+all_stations = all_stations.withColumn('precipitation', extract_dew(all_stations['DEW']))
+
+# Par année
+mean_dew_by_year = all_stations.groupBy([year("DATE").alias("year")]).agg(mean("precipitation").alias("mean_dew"))
+mean_dew_by_year = mean_dew_by_year.sort("year")
+mean_dew_by_year
+
+# Par mois
+mean_dew_by_month = all_stations.groupBy([year("DATE").alias("year"), month("DATE").alias("month")]).agg(mean("precipitation").alias("mean_dew"))
+mean_dew_by_month = mean_dew_by_month.sort("year", "month")
+mean_dew_by_month
+
+# Par jour
+mean_dew_by_day = all_stations.groupBy(to_date("DATE").cast("date").alias("date")).agg(mean("precipitation").alias("mean_dew"))
+mean_dew_by_day = mean_dew_by_day.sort("date")
+mean_dew_by_day
+
+# Par saison
+mean_dew_by_season = all_stations.groupBy([year("DATE").alias("year"), "season"]).agg(mean("precipitation").alias("mean_dew"))
+mean_dew_by_season = mean_dew_by_season.sort("year", "season")
+mean_dew_by_season
+
+# Moyenne des Températures et des précipitations par année et par mois
+mean_dew_elevation_by_year = all_stations.groupBy([year("DATE").alias("year"), month("DATE").alias("month")]).agg(mean("temperature").alias("mean_tmp"), mean("precipitation").alias("mean_dew"))
+mean_dew_elevation_by_year = mean_dew_elevation_by_year.sort("year", "month")
+mean_dew_elevation_by_year
