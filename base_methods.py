@@ -1,7 +1,13 @@
 # %% pycharm={"name": "#%%\n"}
 from pyspark.sql import SparkSession
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession \
+    .builder \
+    .config("spark.driver.extraClassPath", "./mysql-connector-java-8.0.29.jar") \
+    .getOrCreate()
+
+mariadb_container_ip = 'localhost:3306'
+
 hadoop_uri = 'hdfs://localhost:9000/lambda-user/moaa_data/*'
 spark.conf.set('spark.sql.repl.eagerEval.enabled', True)
 
@@ -38,8 +44,9 @@ schema = StructType() \
     .add("REM", StringType(), True) \
     .add("EQD", StringType(), True)
 
-
-cols_of_interest = ("STATION","DATE","SOURCE","LATITUDE","LONGITUDE","ELEVATION","NAME","REPORT_TYPE","CALL_SIGN","QUALITY_CONTROL","WND","CIG","VIS","TMP","DEW","SLP")
+cols_of_interest = (
+    "STATION", "DATE", "SOURCE", "LATITUDE", "LONGITUDE", "ELEVATION", "NAME", "REPORT_TYPE", "CALL_SIGN",
+    "QUALITY_CONTROL", "WND", "CIG", "VIS", "TMP", "DEW", "SLP")
 
 all_data = spark.read.load(
     hadoop_uri,
@@ -48,5 +55,3 @@ all_data = spark.read.load(
     schema=schema,
     inferSchema=False
 ).select(*cols_of_interest)
-
-
