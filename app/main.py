@@ -257,25 +257,30 @@ def min_max_by_year():
     return jsonify(out)
 
 
-@app.route("/api/min-max/by-city/<city>/<year>/<month>", defaults={'month': None})
-def min_max_temperatures_by_month_and_city():
+@app.route("/api/min-max/by-city/<city>/<year>")
+@app.route("/api/min-max/by-city/<city>/", defaults={'year': None})
+def min_max_temperatures_by_month_and_city(city, year):
     mycursor = mariabdb_client.cursor()
-    mycursor.execute("SELECT * FROM min_max_temperatures_by_month_and_city")
+    sql = f"SELECT * FROM min_max_temperatures_by_month_and_city WHERE ville = '{city}'"
 
+    if year:
+        sql += f" AND year = {year}"
+
+    mycursor.execute(sql)
     temperatures = mycursor.fetchall()
-    mycursor.execute("SELECT DISTINCT year FROM min_max_temperatures_by_month_and_city")
-    available_date = mycursor.fetchall()
+
+    mycursor.execute("SELECT DISTINCT ville FROM min_max_temperatures_by_month_and_city")
+    available_city = mycursor.fetchall()
 
     out = {"_data": [], "_meta": {
-        "distinct_years": [year[0] for year in available_date],
-        "distinct_month": [month[0] for month in available_date]
-
+        "distinct_city": [city[0] for city in available_city],
     }}
-    for (city, year, month, min_tmp, max_tmp) in temperatures:
+
+    for (city, station, year, month, min_tmp, max_tmp) in temperatures:
         record = {
-            "place": city,
-            "year": year,
-            "month": month,
+            "city": city,
+            "station": station,
+            "date": str(month) + '-' + str(year),
             "min_tmp": min_tmp,
             "max_tmp": max_tmp,
         }

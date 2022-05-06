@@ -1,40 +1,15 @@
 # %%
-from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
 from pyspark.sql.functions import udf, mean, month, year, to_date, col
 from pyspark.sql.types import *
 
 from base_methods import all_data as all_stations
 
-# %%
-spark = SparkSession\
-    .builder\
-    .config("spark.driver.extraClassPath", "./mysql-connector-java-8.0.29.jar")\
-    .getOrCreate()
-
-mariadb_container_ip = 'localhost:3306'
-
-# %%
-all_stations.head()
-
-# %%
-# Nombre de lignes
-all_stations.count()
-
 # %% [markdown]
 # ## Supprimer les lignes du champ TMP avec des valeurs vides OU des +9999
 
 # %%
 all_stations = all_stations.na.drop(how="any", subset=["TMP"]).filter(~all_stations.TMP.contains("+9999"))
-
-# %%
-# Nombre de lignes après le drop
-all_stations.count()
-
-# %%
-# Le schema de données
-all_stations.printSchema()
-
 
 # %% [markdown]
 # ## Split de la colonne température
@@ -45,10 +20,6 @@ def extract_tmp(tmp_col: str):
     return int(tmp_col.split(',')[0].lstrip('+')) / 10
 
 all_stations = all_stations.withColumn('temperature', extract_tmp(all_stations['TMP']))
-
-# %%
-all_stations.printSchema()
-
 
 # %% [markdown]
 # ## Création du champ season
@@ -67,9 +38,6 @@ def create_season(month: int):
     return season
 
 all_stations = all_stations.withColumn('season', create_season(month("DATE")))
-
-# %%
-all_stations.printSchema()
 
 # %% [markdown]
 # ## Moyenne des températures par année/mois/journée/saison
@@ -111,6 +79,9 @@ mean_tmp_by_season.head(10)
 #
 
 # %% pycharm={"name": "#%%\n"}
+
+from base_methods import mariadb_container_ip
+
 def insert_data_in_mysql(dataframe, table_name):
     dataframe.write.format('jdbc').options(
       url=f'jdbc:mysql://{mariadb_container_ip}/moaa_db',

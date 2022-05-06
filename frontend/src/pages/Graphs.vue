@@ -35,10 +35,22 @@
           Températures moyennes par élévation
         </button>
       </li>
+      <li>
+        <button
+          @click="activateTab(4)"
+          class="inline-block p-4 rounded-t-lg border-b-2"
+          :class="(isActiveTab(4)) ?
+            'text-blue-600 border-blue-600 dark:text-blue-500 dark:border-blue-500' :
+            'border-transparent hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300'"
+        >
+          Températures min/max par ville
+        </button>
+      </li>
     </ul>
     <mean-temperatures-by-periods v-if="tab === 1"/>
     <min-max-temperatures-by-periods v-else-if="tab === 2"/>
     <mean-temperatures-with-elevations-by-year v-else-if="tab === 3"/>
+    <min-max-temperatures-by-city v-else-if="tab === 4"/>
   </div>
 </template>
 
@@ -47,10 +59,13 @@ import Header from "@/components/Header";
 import MeanTemperaturesByPeriods from "@/components/MeanTemperaturesByPeriods";
 import MinMaxTemperaturesByPeriods from "@/components/MinMaxTemperaturesByPeriods";
 import MeanTemperaturesWithElevationsByYear from "@/components/MeanTemperaturesWithElevationsByYear";
+import MinMaxTemperaturesByCity from "@/components/MinMaxTemperaturesByCity";
 
 export default {
   name: "Maps",
-  components: {MeanTemperaturesWithElevationsByYear, MinMaxTemperaturesByPeriods, MeanTemperaturesByPeriods, Header},
+  components: {
+    MinMaxTemperaturesByCity,
+    MeanTemperaturesWithElevationsByYear, MinMaxTemperaturesByPeriods, MeanTemperaturesByPeriods, Header},
   data() {
     return {
       tab: 1,
