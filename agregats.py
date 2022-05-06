@@ -197,6 +197,11 @@ table_name = 'min_max_temperatures_by_day'
 
 insert_data_in_mysql(min_max_tmp_by_day, table_name)
 
+# %%
+table_name = "min_max_temperatures_by_month_and_city"
+
+insert_data_in_mysql(min_max_tmp_by_month_and_city, table_name)
+
 # %% [markdown]
 # # Moyenne des Températures et des Elevations (niveau de la mer) par année . @author: Steeve
 

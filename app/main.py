@@ -257,6 +257,33 @@ def min_max_by_year():
     return jsonify(out)
 
 
+@app.route("/api/min-max/by-city/<city>/<year>/<month>", defaults={'month': None})
+def min_max_temperatures_by_month_and_city():
+    mycursor = mariabdb_client.cursor()
+    mycursor.execute("SELECT * FROM min_max_temperatures_by_month_and_city")
+
+    temperatures = mycursor.fetchall()
+    mycursor.execute("SELECT DISTINCT year FROM min_max_temperatures_by_month_and_city")
+    available_date = mycursor.fetchall()
+
+    out = {"_data": [], "_meta": {
+        "distinct_years": [year[0] for year in available_date],
+        "distinct_month": [month[0] for month in available_date]
+
+    }}
+    for (city, year, month, min_tmp, max_tmp) in temperatures:
+        record = {
+            "place": city,
+            "year": year,
+            "month": month,
+            "min_tmp": min_tmp,
+            "max_tmp": max_tmp,
+        }
+        out["_data"].append(record)
+
+    return jsonify(out)
+
+
 @app.route("/api/tmp-elevation/by-year/<year>")
 @app.route("/api/tmp-elevation/by-year/", defaults={'year': None})
 def tmp_elevation(year):
