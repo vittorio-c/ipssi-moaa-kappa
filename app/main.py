@@ -318,3 +318,32 @@ def tmp_elevation(year):
 
     return jsonify(out)
 
+
+@app.route("/api/tmp-dew/by-month/<year>")
+@app.route("/api/tmp-dew/by-month/", defaults={'year': None})
+def mean_dew_by_month(year):
+    mycursor = mariabdb_client.cursor()
+    sql = "SELECT * FROM mean_dew_tmp_by_month"
+
+    if year:
+        sql += f' WHERE year = \'{year}\''
+
+    mycursor.execute(sql)
+
+    temperatures = mycursor.fetchall()
+    mycursor.execute("SELECT DISTINCT year FROM mean_dew_tmp_by_month")
+    available_years = mycursor.fetchall()
+
+    out = {"_data": [], "_meta": {
+        "distinct_years": [year[0] for year in available_years]
+    }}
+    for (year, month, mean_tmp, mean_dew) in temperatures:
+        record = {
+            "date": f"{month}-{year}",
+            "mean_tmp": mean_tmp,
+            "mean_dew": mean_dew
+        }
+        out["_data"].append(record)
+
+    return jsonify(out)
+
