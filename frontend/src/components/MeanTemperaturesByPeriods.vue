@@ -27,6 +27,7 @@
     <LineChart
       v-if="chartData.datasets[0].data.length > 0"
       :chart-data="chartData"
+      height="500"
     />
   </div>
 

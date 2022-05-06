@@ -1,6 +1,5 @@
 <template>
-  <LineChartGenerator
-    v-if="Object.keys(chartData).length > 0"
+  <Scatter
     :chart-options="chartOptions"
     :chart-data="chartData"
     :chart-id="chartId"
@@ -14,7 +13,7 @@
 </template>
 
 <script>
-import { Line as LineChartGenerator } from 'vue-chartjs'
+import {Scatter} from 'vue-chartjs'
 
 import {
   Chart as ChartJS,
@@ -22,10 +21,9 @@ import {
   Tooltip,
   Legend,
   LineElement,
-  LinearScale,
   CategoryScale,
   PointElement,
-  Filler
+  LinearScale
 } from 'chart.js'
 
 ChartJS.register(
@@ -33,16 +31,20 @@ ChartJS.register(
   Tooltip,
   Legend,
   LineElement,
-  LinearScale,
   CategoryScale,
   PointElement,
-  Filler
+  LinearScale
 )
 
 export default {
-  name: 'LineChart',
+  name: 'ChartScatter',
   components: {
-    LineChartGenerator
+    Scatter
+  },
+  computed: {
+    chartOptions() {
+      return {...this.baseChartOptions, ...this.extraChartOptions};
+    }
   },
   props: {
     chartData: {
@@ -51,7 +53,7 @@ export default {
     },
     chartId: {
       type: String,
-      default: 'line-chart'
+      default: 'scatter-chart'
     },
     datasetIdKey: {
       type: String,
@@ -71,18 +73,23 @@ export default {
     },
     styles: {
       type: Object,
-      default: () => {}
+      default: () => {
+      }
     },
     plugins: {
       type: Array,
       default: () => []
+    },
+    extraChartOptions: {
+      type: Object,
+      default: () => {}
     }
   },
   data() {
     return {
-      chartOptions: {
+      baseChartOptions: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
       }
     }
   }
