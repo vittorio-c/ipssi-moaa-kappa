@@ -172,3 +172,5 @@ data/
 .DS_Store
 app/.DS_Store
 data.zip
+
+checkpoint/

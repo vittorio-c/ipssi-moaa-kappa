@@ -8,6 +8,7 @@ from bs4 import BeautifulSoup
 
 
 def import_by_years(year_range):
+    print(year_range)
     year_range_as_string = ' '.join(map(str, year_range))
     print(f'Worker starting to work on year range : {year_range_as_string}')
     for year in year_range:
@@ -25,7 +26,9 @@ def import_by_years(year_range):
                     print(f"DOWNLOADED: {year}/{link.string}")
 
 
-rangings = [[i, f] for (i, f) in zip(range(1902, 2020, 2), range(1901, 2021, 2))]
+# rangings = [[i, f] for (i, f) in zip(range(1902, 2020, 2), range(1901, 2021, 2))]
+
+rangings = [[2020, 2021]]
 
 if __name__ == '__main__':
     pool = Pool(processes=10)

@@ -110,8 +110,8 @@ services:
       - "3306:3306"
     environment:
       MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
-      MARIADB_DATABASE: moaa_db
-      MARIADB_USER: lambda-user
+      MARIADB_DATABASE: ${MARIADB_DATABASE}
+      MARIADB_USER: ${MARIADB_USER}
       MARIADB_PASSWORD: ${MARIADB_PASSWORD}
 
 
@@ -148,7 +148,7 @@ services:
      - "8092:8080"
     restart: always
     environment:
-     - KAFKA_CLUSTERS_0_NAME=SomeRandomNameForCluster
+     - KAFKA_CLUSTERS_0_NAME=MOAA-Stats
      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9093
      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:2181
 
