@@ -1,6 +1,6 @@
 from pyspark.sql import SparkSession
 
-from app.speed_layer.schema import schema
+from app.speed_layer.feed.schema import schema
 
 spark = SparkSession \
     .builder \

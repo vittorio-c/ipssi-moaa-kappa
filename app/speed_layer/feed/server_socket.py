@@ -4,10 +4,11 @@ import pickle
 
 from app.speed_layer.kafka.kafka_producer_factory import get_producer
 
+producer = get_producer('localhost:9092')
+
 
 def publish_to_kafka(message):
     print('Publishing of Kafka topic...')
-    producer = get_producer('localhost:9092')
     producer.send('raw_probes_results', message)
 
 

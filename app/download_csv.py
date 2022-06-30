@@ -28,7 +28,7 @@ def import_by_years(year_range):
 
 # rangings = [[i, f] for (i, f) in zip(range(1902, 2020, 2), range(1901, 2021, 2))]
 
-rangings = [[2020, 2021]]
+rangings = [[2022, 2023]]
 
 if __name__ == '__main__':
     pool = Pool(processes=10)
