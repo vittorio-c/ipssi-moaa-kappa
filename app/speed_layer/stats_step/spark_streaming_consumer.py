@@ -2,7 +2,7 @@ import warnings
 
 from pyspark import SparkConf, SparkContext
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf, from_json, col, window, mean, to_json, struct
+from pyspark.sql.functions import udf, from_json, col, window, mean, to_json, struct, max, min
 from pyspark.sql.types import FloatType, StructType, StructField, StringType, IntegerType, \
     TimestampType
 
@@ -61,13 +61,16 @@ df = df.withColumn('temperature', extract_tmp(df['TMP']))
 df = df \
     .withWatermark("DATE", "30 minutes") \
     .groupBy(window("DATE", "60 minutes").alias("datetime")) \
-    .agg(mean("temperature").alias('mean_tmp'))
+    .agg(
+        mean("temperature").alias("mean_tmp"),
+        max("temperature").alias("max_tmp"),
+        min("temperature").alias("min_tmp"),
+    )
 
 
-# TODO add min/max values
 # Start running the query that prints the running results to the console
 query = df \
-    .select(to_json(struct("datetime", "mean_tmp")).alias("value")) \
+    .select(to_json(struct("datetime", "mean_tmp", "max_tmp", "min_tmp")).alias("value")) \
     .writeStream \
     .format("kafka") \
     .option("kafka.bootstrap.servers", "localhost:9092") \

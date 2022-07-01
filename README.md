@@ -131,6 +131,9 @@ in order to process it later with Spark Streaming :
 py -m app.speed_layer.feed.client_socket_v2
 ```
 
+> The script first dowload the data from MOAA API, then
+> feed it to the data pipeline
+
 Don't forget to choose how many stations you want to process:
 
 ```python
@@ -154,7 +157,7 @@ py -m app.speed_layer.stats_step.spark_streaming_consumer
 Finally, to save the results in MySQL DB, you need to launch yet another process :
 
 ```shell
-py -m app.speed_layer.insert_step.tmp_hourly_mysql_insert
+py -m app.speed_layer.insert_step.tmp_hourly
 ```
 
 ## Stats

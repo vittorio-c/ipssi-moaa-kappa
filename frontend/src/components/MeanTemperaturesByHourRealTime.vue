@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-2xl mx-auto">
+  <div class="max-w-2xl">
 
     <div class="flex flex-col">
       <div class="overflow-x-auto shadow-md sm:rounded-lg">
@@ -22,12 +22,12 @@
 
               <tr class="hover:bg-gray-100 dark:hover:bg-gray-700" v-for="(record, k) in records" :key="k">
                 <td class="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  {{ record.reported_hour }}
+                  {{ record.display_date }}
                 </td>
                 <td class="py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white">
                   <transition name="bounce" mode="out-in">
-                    <div :key="record.temperature">
-                      {{ record.temperature }}
+                    <div :key="record.mean_tmp">
+                      {{ record.mean_tmp ? record.mean_tmp + ' °C' : 'Pas encore de données' }}
                     </div>
                   </transition>
                 </td>
@@ -44,11 +44,11 @@
 <script>
 
 export default {
-  name: "ShowTable",
+  name: "MeanTemperaturesByHourRealTime",
   props: {
     records: {
       required: true,
-      type: Array,
+      type: Object,
     }
   },
 }

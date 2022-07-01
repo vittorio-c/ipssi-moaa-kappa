@@ -1,15 +1,39 @@
 import datetime
+from json import JSONEncoder
+from datetime import date
 from dateutil.relativedelta import relativedelta
 
 from flask import Flask, jsonify, render_template, request
 
 from database.connection import mariabdb_client
 
+
+class CustomJSONEncoder(JSONEncoder):
+    def default(self, obj):
+        try:
+            if isinstance(obj, date):
+                return obj.isoformat()
+            iterable = iter(obj)
+        except TypeError:
+            pass
+        else:
+            return list(iterable)
+        return JSONEncoder.default(self, obj)
+
+
 app = Flask(__name__)
+
+app.json_encoder = CustomJSONEncoder
 
 from cors import setup_cors
 
 setup_cors()
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# !! Please note that this file is not production safe, because it does not prepare mysql statements !
+# It's vulnerable to mysql injections. Modify it for production !
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 @app.route("/")
@@ -350,26 +374,34 @@ def mean_dew_by_month(year):
 
 @app.route("/api/real-time/hourly")
 def real_time_hourly():
-    mycursor = mariabdb_client.cursor()
-    sql = "SELECT * FROM mean_tmp_by_hour"
+    try:
+        mycursor = mariabdb_client.cursor()
+        sql = "SELECT * FROM real_time_tmp_by_hour ORDER BY reported_hour"
 
-    mycursor.execute(sql)
+        mycursor.execute(sql)
 
-    temperatures = mycursor.fetchall()
-    mycursor.execute("SELECT DISTINCT reported_hour FROM mean_tmp_by_hour ORDER BY reported_hour")
-    available_hours = mycursor.fetchall()
+        temperatures = mycursor.fetchall()
+        mycursor.execute("SELECT DISTINCT reported_hour FROM real_time_tmp_by_hour")
+        available_hours = mycursor.fetchall()
 
-    out = {"_data": [], "_meta": {
-        "distinct_hours": [hour[0] for hour in available_hours]
-    }}
+        out = {"_data": [], "_meta": {
+            "distinct_hours": [hour[0] for hour in available_hours]
+        }}
 
-    for (id, hour, mean_tmp) in temperatures:
-        record = {
-            "reported_hour": hour,
-            "temperature": mean_tmp,
-        }
-        out["_data"].append(record)
+        for (id, hour, mean_tmp, max_tmp, min_tmp) in temperatures:
+            record = {
+                "reported_hour": hour,
+                "mean_tmp": mean_tmp,
+                "max_tmp": max_tmp,
+                "min_tmp": min_tmp,
+            }
+            out["_data"].append(record)
 
-    mariabdb_client.commit()
+        mariabdb_client.commit()
 
-    return jsonify(out)
+        return jsonify(out)
+    except Exception as e:
+        mariabdb_client.close()
+        print(e)
+        return jsonify(), 204
+
