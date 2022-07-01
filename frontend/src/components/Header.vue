@@ -5,8 +5,11 @@
     <li class="align-middle mx-8">
       <router-link to="/graphs">Graphs</router-link>
     </li>
-    <li class="align-middle">
+    <li class="align-middle mx-8">
       <router-link to="/maps">Maps</router-link>
+    </li>
+    <li class="align-middle mx-8">
+      <router-link to="/real-time">Temps réel</router-link>
     </li>
   </ul>
 </template>

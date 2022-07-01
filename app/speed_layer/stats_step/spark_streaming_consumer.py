@@ -17,8 +17,6 @@ conf.set('loglevel', 'ERROR')
 
 SparkContext(conf=conf)
 
-# context.setLogLevel("ERROR")
-
 spark = SparkSession \
     .builder \
     .appName("MOAA-Stats-Live-Streaming") \
@@ -75,7 +73,7 @@ query = df \
     .option("kafka.bootstrap.servers", "localhost:9092") \
     .option("topic", "agg_probes_results") \
     .option("checkpointLocation", checkpointLocation) \
-    .trigger(processingTime='20 seconds') \
+    .trigger(processingTime='5 seconds') \
     .outputMode("complete") \
     .start()
 

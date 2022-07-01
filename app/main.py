@@ -347,3 +347,29 @@ def mean_dew_by_month(year):
 
     return jsonify(out)
 
+
+@app.route("/api/real-time/hourly")
+def real_time_hourly():
+    mycursor = mariabdb_client.cursor()
+    sql = "SELECT * FROM mean_tmp_by_hour"
+
+    mycursor.execute(sql)
+
+    temperatures = mycursor.fetchall()
+    mycursor.execute("SELECT DISTINCT reported_hour FROM mean_tmp_by_hour ORDER BY reported_hour")
+    available_hours = mycursor.fetchall()
+
+    out = {"_data": [], "_meta": {
+        "distinct_hours": [hour[0] for hour in available_hours]
+    }}
+
+    for (id, hour, mean_tmp) in temperatures:
+        record = {
+            "reported_hour": hour,
+            "temperature": mean_tmp,
+        }
+        out["_data"].append(record)
+
+    mariabdb_client.commit()
+
+    return jsonify(out)

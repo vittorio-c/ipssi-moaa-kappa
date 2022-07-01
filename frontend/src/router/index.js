@@ -1,6 +1,7 @@
 import {createRouter, createWebHistory} from "vue-router";
 import Maps from "@/pages/Maps";
 import Graphs from "@/pages/Graphs";
+import RealTime from "@/pages/RealTime";
 
 const routes = [
     {
@@ -12,6 +13,11 @@ const routes = [
         path: "/maps",
         name: "Maps",
         component: Maps,
+    },
+    {
+        path: "/real-time",
+        name: "RealTime",
+        component: RealTime,
     },
 ];
 

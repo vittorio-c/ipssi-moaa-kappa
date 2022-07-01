@@ -47,9 +47,10 @@ def get_url_params(stations_names_as_string):
 
 
 def download_today_data():
+    print('Starting downloading the data...')
     write_headers()
     step_size = 50  # max requested station quantity allowed by MOAA API
-    number_of_statoins = 1010  # how many stations you want to retrieve
+    number_of_statoins = 100  # how many stations you want to retrieve
     start_at = 10  # we start at 10 because first records are garbage
 
     for i in range(start_at, number_of_statoins, step_size):
@@ -82,14 +83,17 @@ def download_today_data():
 
             writer.writerows(response_as_dict)
 
+    print('Done !')
+
 
 def send_to_server_socket(client, payload):
+    print('>> Sending data to socket')
     data = pickle.dumps(payload[1].to_dict())
     client.send(data)
 
 
 def publish_data():
-    print("Connecting...")
+    print("Starting publishing the data to socket...")
     if os.path.exists("/tmp/python_unix_sockets_example"):
         client = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
         client.connect("/tmp/python_unix_sockets_example")
@@ -103,7 +107,7 @@ def publish_data():
 
         try:
             for row in df.iterrows():
-                time.sleep(0.4)
+                time.sleep(0.1)
                 send_to_server_socket(client, row)
         except KeyboardInterrupt as k:
             client.close()
@@ -118,5 +122,5 @@ def publish_data():
 
 
 if __name__ == "__main__":
-    download_today_data()
+    # download_today_data()
     publish_data()
