@@ -1,14 +1,24 @@
-# ipssi-moaa
+# About
 
-Pour exporter son juptyer notebook en .py :
+This repository is a proof of work for a Kappa architecture, which is an event based architecture to handle real-time data processing.
 
-`jupytext --format-options notebook_metadata_filter="-all" --to py:percent <filename>.ipynb`
+It uses following stack :
 
-Pour exporter un fichier .py en juptyer notebook :
+- Spark Streaming as the data processer,
+- Kafka broker as a message broker,
+- MySQL to store processed data in a data warhouse,
+- Python flask to expose some API routes,
+- VueJS to create the user interface and see calculated data.
 
-`jupytext --to ipynb <filename>.py`
+The data comes from NOAA meteorological data : <https://www.ncei.noaa.gov/cdo-web/>. It shows temperatures from several meteo stations scattered around the world, hour by hour.
 
-Ne pas commiter les jupyter notebook. Commiter les .py.
+A data feed simulator sends this data in little batches every 30 seconds. Those batches are used to calculate ongoing means, max and min temperatures by jours, with Spark Streaming. The results are then stored to MySQL and showed to end users.
+
+Cf. <https://app.moqups.com/a5r0wjvSgi4Xyx94Z7zfuXo2I4Oefjr4/edit/page/ad64222d5>
+
+![](./medias/2022-06-27_15-29-59.png)
+
+![](./medias/2022-06-27_16-56-24.png)
 
 # Speed Layer (Kappa achitecture)
 
@@ -38,7 +48,7 @@ flowchart LR
     end
 
     %% kafka_producer -- New data --> kafka_broker
-    
+
     subgraph broker_node
     kafka_broker
     end
@@ -46,21 +56,21 @@ flowchart LR
     subgraph stats_step
     spark_streaming_stats --> compute_means
     end
-    
+
     %% kafka_broker --> spark_streaming_stats
     %% kafka_broker --> spark_streaming_ml
     %% compute_means --> kafka_broker
     %% predict --> kafka_broker
-    
+
     subgraph ml_step
     model o--o spark_streaming_ml
     spark_streaming_ml --> predict
     end
-    
+
     subgraph mysql_step
     insert_mysql --> mysql
     end
-    
+
     broker_node --> mysql_step
     feed_step --> broker_node
     broker_node <--> stats_step
@@ -69,11 +79,11 @@ flowchart LR
 
 Essentially, the streaming pipeline is as following :
 
-- => Download Data from MOAA API 
-- => Push data to socket 
-- => Listen to socket and push data back to Kafka 
-- => Consume message and do calculation (spark streaming) 
-- => Push calculation results back to Kafka 
+- => Download Data from MOAA API
+- => Push data to socket
+- => Listen to socket and push data back to Kafka
+- => Consume message and do calculation (spark streaming)
+- => Push calculation results back to Kafka
 - => Consume message and insert in MySQL
 
 Spark Streaming:
@@ -86,7 +96,7 @@ Kakfa broker:
 More details on the stats and mysql steps :
 
 ```mermaid
-flowchart 
+flowchart
     raw_topic[Topic for raw data from stations]
     agg_topic[Topic for aggregated results]
     spark_streaming_1[/Spark Streaming Process 1\]
@@ -94,16 +104,16 @@ flowchart
     mysql_consummer[/Mysql consumer\]
     insert_mysql{Insert job}
     mysql_db[(MySQL)]
-    
+
     subgraph broker_node[Kafka Broker]
     raw_topic
     agg_topic
     end
-    
-    raw_topic -- Microbatch 5s --> spark_streaming_1 
+
+    raw_topic -- Microbatch 5s --> spark_streaming_1
     -- Publish results --> agg_topic
     spark_streaming_1 o--o compute_means
-    
+
     agg_topic -- Consume --> mysql_consummer --> mysql_db
     mysql_consummer o--o insert_mysql
 ```
@@ -146,7 +156,7 @@ Then, you need to launch Spark Streaming process, in order to process all that d
 calculate means, max/min, etc. :
 
 ```shell
-py -m app.speed_layer.stats_step.spark_streaming_consumer 
+py -m app.speed_layer.stats_step.spark_streaming_consumer
 ```
 
 > Please remember that the folder `app/speed_layer/stats_step/checkpoint/` contains checkpoints
@@ -166,16 +176,11 @@ The agregated values that we are going to calcultate are :
 - min / max TMP of the current hour
 - mean TMP of the current hour
 
-## UI
-
-Cf. <https://app.moqups.com/a5r0wjvSgi4Xyx94Z7zfuXo2I4Oefjr4/edit/page/ad64222d5>
-
-![](./medias/2022-06-27_15-29-59.png)
-
-![](./medias/2022-06-27_16-56-24.png)
-
-
 # Batch Layer (Lambda architecture)
+
+> On top of the speed layer, there is a batch layer that will calculate and show the same values (mean, max, min) but for the whole period of time, i.e. for the X last years, depending on how many years of data you choose to download.
+
+> Theses stats are shown in a separate tab view
 
 First, you need to download the data from MOAA website :
 
