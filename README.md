@@ -1,5 +1,7 @@
 # About
 
+> This is a student project
+
 This repository is a proof of work for a Kappa architecture, which is an event based architecture to handle real-time data processing.
 
 It uses following stack :
